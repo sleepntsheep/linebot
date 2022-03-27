@@ -1,4 +1,6 @@
 import random
+import sys
+from io import StringIO
 from typing import List
 from os import getenv
 from flask import Flask, request, abort
@@ -38,10 +40,11 @@ def handle_message(event):
         command: str = event.message.text.split()[0]
         params: List[str] = event.message.text.split()[1:]
         if (command == 'e'):
+            old_stdout = sys.stdout
+            sys.stdout = mystdout = StringIO()
             replytext: str = eval(' '.join(params))
-        # replytext: str = replytext.replace('[', '1').replace(']', '2')
-        print(replytext)
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=str(replytext)))
+            sys.stdout = old_stdout
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=f'Stdout: {mystdout.getvalue()}\nReturn: {replytext}'))
     except Exception as error:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=repr(error)))
 
