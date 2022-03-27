@@ -34,7 +34,7 @@ def callback():
 def handle_message(event):
     replytext: str = ''
     command: str = event.message.text.split()[0]
-    params: List[str] = event.message.text.split()[1:-1]
+    params: List[str] = event.message.text.split()[1:]
     if (command == 'e'):
         replytext: str = eval(' '.join(params))
     line_bot_api.reply_message(event.reply_token, TextSendMessage(text=replytext))
