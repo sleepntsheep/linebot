@@ -13,7 +13,7 @@ app = Flask(__name__)
 line_bot_api = LineBotApi(getenv('CHANNEL_TOKEN'))
 handler = WebhookHandler(getenv('CHANNEL_SECRET'))
 
-@app.route('/callback', method=('POST',))
+@app.route('/callback', methods=('POST',))
 def callback():
     signature = request.headers['X-Line-Signature']
     body = request.get_data(as_text=True)
