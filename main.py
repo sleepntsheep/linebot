@@ -41,7 +41,7 @@ def handle_message(event):
             replytext: str = eval(' '.join(params))
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=replytext))
     except Exception as error:
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=error))
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=str(error)))
 
 if __name__ == '__main__':
     app.run(int(getenv('PORT')))
