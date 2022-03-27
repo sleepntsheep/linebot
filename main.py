@@ -39,8 +39,8 @@ def handle_message(event):
         params: List[str] = event.message.text.split()[1:]
         if (command == 'e'):
             replytext: str = eval(' '.join(params))
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=replytext))
         replytext: str = replytext.replace('[', '1').replace(']', '2')
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=replytext))
 
     except Exception as error:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=repr(error)))
