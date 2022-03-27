@@ -42,9 +42,11 @@ def handle_message(event):
         if (command == 'e'):
             old_stdout = sys.stdout
             sys.stdout = mystdout = StringIO()
-            replytext: str = eval(' '.join(params))
+            evalres: str = eval(' '.join(params))
+
             sys.stdout = old_stdout
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=f'Stdout: {mystdout.getvalue()}\nReturn: {replytext}'))
+            replytext = f'Stdout: {mystdout.getvalue()}\nReturn: {evalres}'
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=replytext))
     except Exception as error:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=repr(error)))
 
