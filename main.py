@@ -40,7 +40,8 @@ def handle_message(event):
         if (command == 'e'):
             replytext: str = eval(' '.join(params))
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=replytext))
-        replytext.replace('[', '\[')
+        replytext = replytext.replace('[', '\[').replace(']', '\]')
+
     except Exception as error:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=repr(error)))
 
