@@ -32,7 +32,7 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    replytext: str = ''
+    replytext: str = 'default'
     command: str = event.message.text.split()[0]
     params: List[str] = event.message.text.split()[1:]
     if (command == 'e'):
