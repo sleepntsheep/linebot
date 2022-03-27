@@ -41,7 +41,7 @@ def handle_message(event):
             replytext: str = eval(' '.join(params))
         # replytext: str = replytext.replace('[', '1').replace(']', '2')
         print(replytext)
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=replytext))
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=str(replytext)))
     except Exception as error:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=repr(error)))
 
