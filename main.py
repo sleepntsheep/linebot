@@ -1,5 +1,8 @@
+import random
+from typing import List
 from os import getenv
 from flask import Flask, request, abort
+import math
 import base64
 import hashlib
 import hmac
@@ -29,6 +32,11 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
+    replytext: str = ''
+    command: str = event.message.text.split()[0]
+    params: List[str] = event.message.text.split()[1:-1]
+    if (command == 'e'):
+        replytext: str = eval(' '.join(params))
     line_bot_api.reply_message(event.reply_token, TextSendMessage(text=event.message.text))
 
 if __name__ == '__main__':
