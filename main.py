@@ -37,7 +37,7 @@ def handle_message(event):
     params: List[str] = event.message.text.split()[1:-1]
     if (command == 'e'):
         replytext: str = eval(' '.join(params))
-    line_bot_api.reply_message(event.reply_token, TextSendMessage(text=event.message.text))
+    line_bot_api.reply_message(event.reply_token, TextSendMessage(text=replytext))
 
 if __name__ == '__main__':
     app.run(int(getenv('PORT')))
