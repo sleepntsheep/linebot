@@ -5,7 +5,7 @@ import base64
 import hashlib
 import hmac
 from io import StringIO, BytesIO
-from typing import List
+from typing import List, Dict
 from os import getenv
 
 import requests
@@ -53,8 +53,8 @@ def handle_message(event):
             case 'q':
                 img = qrcode.make(' '.join(params))
                 imgur_client_id = getenv('IMGUR_CLIENTID')
-                headers = {'Authorization': f'Client-ID {imgur_client_id}'}
-                imgur_api_key = getenv('IMGUR_CLIENTSECRET')
+                headers: Dict = {'Authorization': f'Client-ID {imgur_client_id}'}
+                imgur_api_key: str = getenv('IMGUR_CLIENTSECRET')
                 url = 'https://api.imgur.com/3/upload.json'
                 buffer = BytesIO()
                 img.save(buffer)
@@ -74,7 +74,7 @@ def handle_message(event):
                     }
                 )
 
-                replytext = j1.text()
+                replytext = j1
                 
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=replytext))
     except Exception as error:
