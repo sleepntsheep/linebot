@@ -1,13 +1,16 @@
 import random
 import sys
-from io import StringIO
-from typing import List
-from os import getenv
-from flask import Flask, request, abort
 import math
 import base64
 import hashlib
 import hmac
+from io import StringIO, BytesIO
+from typing import List
+from os import getenv
+
+import requests
+import qrcode
+from flask import Flask, request, abort
 
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
@@ -39,13 +42,38 @@ def handle_message(event):
         replytext: str = 'default'
         command: str = event.message.text.split()[0]
         params: List[str] = event.message.text.split()[1:]
-        if (command == 'e'):
-            old_stdout = sys.stdout
-            sys.stdout = mystdout = StringIO()
-            evalres: str = eval(' '.join(params))
+        match command:
+            case 'e':
+                old_stdout = sys.stdout
+                sys.stdout = mystdout = StringIO()
+                evalres: str = eval(' '.join(params))
 
-            sys.stdout = old_stdout
-            replytext = f'Stdout: {mystdout.getvalue()}\nReturn: {evalres}'
+                sys.stdout = old_stdout
+                replytext = f'Stdout: {mystdout.getvalue()}\nReturn: {evalres}'
+            case 'q':
+                img = qrcode.make(' '.join(params))
+                imgur_client_id = getenv('IMGUR_CLIENTID')
+                headers = {'Authorization': f'Client-ID ' {imgur_client_id}}
+                imgur_api_key = getenv('IMGUR_CLIENTSECRET')
+                url = 'https://api.imgur.com/3/upload.json'
+                buffer = BytesIO()
+                img.save(buffer)
+                md = hashlib.md5()
+                md.update(buffer.getvalue())
+                encoded_img = base64.b64encode(buffer.getvalue())
+                
+                j1 = requests.post(
+                    url,
+                    headers = headers,
+                    data = {
+                        'key': imgur_api_key,
+                        'image': encoded_img,
+                        'type': 'base64',
+                        'name': md,
+                        'title': md
+                    }
+                )
+
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=replytext))
     except Exception as error:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=repr(error)))
