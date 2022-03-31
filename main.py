@@ -53,7 +53,7 @@ def handle_message(event):
             case 'q':
                 img = qrcode.make(' '.join(params))
                 imgur_client_id = getenv('IMGUR_CLIENTID')
-                headers = {'Authorization': f'Client-ID ' {imgur_client_id}}
+                headers = {'Authorization': f'Client-ID {imgur_client_id}'}
                 imgur_api_key = getenv('IMGUR_CLIENTSECRET')
                 url = 'https://api.imgur.com/3/upload.json'
                 buffer = BytesIO()
