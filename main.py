@@ -74,7 +74,7 @@ def handle_message(event):
                     }
                 )
 
-                replytext = j1
+                replytext = j1.text
                 
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=replytext))
     except Exception as error:
