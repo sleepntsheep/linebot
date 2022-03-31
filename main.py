@@ -14,7 +14,7 @@ from flask import Flask, request, abort
 
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
-from linebot.models import MessageEvent, TextMessage, TextSendMessage
+from linebot.models import MessageEvent, TextMessage, TextSendMessage, ImageSendMessage
 
 app = Flask(__name__)
 
@@ -39,17 +39,18 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     try:
-        replytext: str = 'default'
         command: str = event.message.text.split()[0]
         params: List[str] = event.message.text.split()[1:]
         match command:
             case 'e':
+                replytext: str = 'default'
                 old_stdout = sys.stdout
                 sys.stdout = mystdout = StringIO()
                 evalres: str = eval(' '.join(params))
 
                 sys.stdout = old_stdout
                 replytext = f'Stdout: {mystdout.getvalue()}\nReturn: {evalres}'
+                line_bot_api.reply_message(event.reply_token, TextSendMessage(text=replytext))
             case 'q':
                 img = qrcode.make(' '.join(params))
                 imgur_client_id = getenv('IMGUR_CLIENTID')
@@ -74,9 +75,11 @@ def handle_message(event):
                     }
                 )
 
-                replytext = j1.text
+                line_bot_api.reply_message(event.reply_token, ImageSendMessage(
+                    original_content_url = j1.json['data']['link'],
+                    preview_image_url = j1.json['data']['link']
+                ))
                 
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=replytext))
     except Exception as error:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=repr(error)))
 
