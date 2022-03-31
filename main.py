@@ -8,6 +8,8 @@ from io import StringIO, BytesIO
 from typing import List, Dict
 from os import getenv
 
+from command import Commands
+
 import requests
 import qrcode
 from flask import Flask, request, abort
@@ -52,32 +54,10 @@ def handle_message(event):
                 replytext = f'Stdout: {mystdout.getvalue()}\nReturn: {evalres}'
                 line_bot_api.reply_message(event.reply_token, TextSendMessage(text=replytext))
             case 'q':
-                img = qrcode.make(' '.join(params))
-                imgur_client_id = getenv('IMGUR_CLIENTID')
-                headers: Dict = {'Authorization': f'Client-ID {imgur_client_id}'}
-                imgur_api_key: str = getenv('IMGUR_CLIENTSECRET')
-                url = 'https://api.imgur.com/3/upload.json'
-                buffer = BytesIO()
-                img.save(buffer)
-                md = hashlib.md5()
-                md.update(buffer.getvalue())
-                encoded_img = base64.b64encode(buffer.getvalue())
-                
-                j1 = requests.post(
-                    url,
-                    headers = headers,
-                    data = {
-                        'key': imgur_api_key,
-                        'image': encoded_img,
-                        'type': 'base64',
-                        'name': md,
-                        'title': md
-                    }
-                )
-
+                link: str = Commands.qrcode(' '.join(params))
                 line_bot_api.reply_message(event.reply_token, ImageSendMessage(
-                    original_content_url = j1.json['data']['link'],
-                    preview_image_url = j1.json['data']['link']
+                    original_content_url = link,
+                    preview_image_url = link
                 ))
                 
     except Exception as error:
